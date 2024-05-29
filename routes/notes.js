@@ -14,14 +14,22 @@ notes.post('/', (req, res) => {
         note_id: uuid()
     };
 
-    // console.log(newNote);
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         err ? console.error(err) : console.log(data);
         const parsedData = JSON.parse(data);
         parsedData.push(newNote)
         console.log(parsedData);
-    })
+
+        writeFile('./db/db.json', parsedData)
+    });
+
     return res.json(newNote);
-})
+});
+
+
+function writeFile(file, data) {
+    fs.writeFile(file, JSON.stringify(data, null, 4), (err) => err ? console.error(err) : console.log("Successfully wrote to the file"))
+}
+
 
 module.exports = notes;
