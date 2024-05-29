@@ -14,6 +14,12 @@ notes.post('/', (req, res) => {
         note_id: uuid()
     };
 
+    readAndAppendFile(newNote);
+
+    return res.json(newNote);
+});
+
+function readAndAppendFile(newNote) {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         err ? console.error(err) : console.log(data);
         const parsedData = JSON.parse(data);
@@ -22,10 +28,7 @@ notes.post('/', (req, res) => {
 
         writeFile('./db/db.json', parsedData)
     });
-
-    return res.json(newNote);
-});
-
+}
 
 function writeFile(file, data) {
     fs.writeFile(file, JSON.stringify(data, null, 4), (err) => err ? console.error(err) : console.log("Successfully wrote to the file"))
