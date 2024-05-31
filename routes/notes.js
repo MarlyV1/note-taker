@@ -21,6 +21,14 @@ notes.post('/', (req, res) => {
     return res.json(newNote);
 });
 
+// DELETE route to delete notes
+notes.delete('/:id', (req, res) => {
+    const id = req.params.id;
+
+    readAndDeleteFile(id, res)
+});
+
+
 //Retrieves all notes then writes the new note to the file
 function readAndAppendFile(newNote) {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
@@ -34,37 +42,30 @@ function readAndAppendFile(newNote) {
     });
 };
 
-notes.delete('/:id', (req, res) => {
-    const id = req.params.id;
-    fs.readFile('./db/db.json', 'utf-8', (err, data) =>{
-        err ? console.error(err) : console.log("success");
 
+// //Retrieves all notes then deletes a note from the file
+function readAndDeleteFile(id, res) {
+
+    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+        if (err) {
+            console.error(err);
+            res.sendStatus(500); // Internal Server Error
+            return;
+            }     
+               
         const parsedData = JSON.parse(data);
-        parsedData.filter(filteredData(parsedData, id))
-        // console.log(parsedData)
+        const filteredData = parsedData.filter(item => item.note_id !== id);
+
+    fs.writeFile('./db/db.json', JSON.stringify(filteredData, null, 4), 'utf-8', (err) => {
+        if (err) {
+        console.error(err);
+        res.sendStatus(500); // Internal Server Error
+        return;
+        }
     })
-})
-
-
-function filteredData(data, id) {
-    data.forEach((e) => {
-        console.log(e.note_id);
-        console.log(e.note_id !== id);
-    });
+    console.log("Note deleted successfully");
+    })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 module.exports = notes;
