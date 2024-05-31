@@ -34,6 +34,37 @@ function readAndAppendFile(newNote) {
     });
 };
 
+notes.delete('/:id', (req, res) => {
+    const id = req.params.id;
+    fs.readFile('./db/db.json', 'utf-8', (err, data) =>{
+        err ? console.error(err) : console.log("success");
+
+        const parsedData = JSON.parse(data);
+        parsedData.filter(filteredData(parsedData, id))
+        // console.log(parsedData)
+    })
+})
+
+
+function filteredData(data, id) {
+    data.forEach((e) => {
+        console.log(e.note_id);
+        console.log(e.note_id !== id);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = notes;
